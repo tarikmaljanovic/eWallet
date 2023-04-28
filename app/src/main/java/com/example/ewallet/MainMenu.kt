@@ -11,18 +11,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 val ubuntuFont = FontFamily(
     Font(R.font.ubuntu_font)
 )
 
 @Composable
-fun MainMenuScreen(modifier: Modifier = Modifier) {
+fun MainMenuScreen(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     Column(
         modifier
             .fillMaxSize()
@@ -50,23 +56,23 @@ fun MainMenuScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            MenuButton(optionName = "My Cards")
+            MenuButton(optionName = "My Cards", destination = { navController.navigate("MyCards") })
             Spacer(modifier = Modifier.height(16.dp))
-            MenuButton(optionName = "Transaction History")
+            MenuButton(optionName = "Transaction History", destination = { navController.navigate("TransactionHistory") })
             Spacer(modifier = Modifier.height(16.dp))
-            MenuButton(optionName = "New Transaction")
+            MenuButton(optionName = "New Transaction", destination = { navController.navigate("NewTransaction") })
             Spacer(modifier = Modifier.height(16.dp))
-            MenuButton(optionName = "Monthly Balance Sheet")
+            MenuButton(optionName = "Monthly Balance Sheet", destination = { navController.navigate("BalanceSheet") })
             Spacer(modifier = Modifier.height(16.dp))
-            MenuButton(optionName = "Logout")
+            MenuButton(optionName = "Logout", destination = { navController.navigate("Login") })
         }
     }
 }
 
 @Composable
-fun MenuButton(modifier: Modifier = Modifier, optionName: String) {
+fun MenuButton(modifier: Modifier = Modifier, optionName: String, destination: () -> Unit) {
     Button(
-        onClick = { },
+        onClick = destination,
         shape = CutCornerShape(10),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000)),
         modifier = modifier

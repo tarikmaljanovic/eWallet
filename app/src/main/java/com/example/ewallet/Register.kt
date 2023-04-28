@@ -27,10 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.ewallet.ui.theme.EWalletTheme
 
 @Composable
-fun RegisterScreen(modifier: Modifier = Modifier) {
+fun RegisterScreen(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
     )
@@ -42,7 +46,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
     val focusManager = LocalFocusManager.current
 
     Column (
-        modifier.fillMaxSize()
+        modifier.fillMaxSize(),
     ) {
         Column (
             modifier
@@ -168,7 +172,9 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { },
+                onClick = {
+                    navController.navigate("Login")
+                },
                 shape = CutCornerShape(10),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))
             ) {

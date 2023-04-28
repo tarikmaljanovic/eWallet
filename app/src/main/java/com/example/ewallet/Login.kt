@@ -34,11 +34,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import androidx.navigation.NavHostController
 import com.example.ewallet.ui.theme.EWalletTheme
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
     )
@@ -148,7 +152,10 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
             Row {
                 Button(
-                    onClick = { wrongInfo = true },
+                    onClick = {
+                        wrongInfo = true
+                        navController.navigate("MainMenu")
+                              },
                     shape = CutCornerShape(10),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))
                 ) {
@@ -156,7 +163,9 @@ fun LoginScreen(modifier: Modifier = Modifier) {
                 }
                 Spacer(modifier = modifier.width(10.dp))
                 Button(
-                    onClick = { },
+                    onClick = {
+                        navController.navigate("Register")
+                    },
                     shape = CutCornerShape(10),
                     border = BorderStroke(1.dp, Color.Red),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFCD0000))
