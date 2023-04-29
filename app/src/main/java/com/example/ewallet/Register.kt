@@ -29,9 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.ewallet.data.MyDatabase
-import com.example.ewallet.data.User
-import com.example.ewallet.data.UserDao
 import com.example.ewallet.ui.theme.EWalletTheme
 
 @Composable

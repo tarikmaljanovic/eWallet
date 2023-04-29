@@ -19,14 +19,11 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import com.example.ewallet.data.CardDao
 import com.example.ewallet.data.MyDatabase
-import com.example.ewallet.data.User
-import com.example.ewallet.data.UserDao
 import com.example.ewallet.ui.theme.EWalletTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.example.ewallet.ui.theme.EWalletTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,14 +47,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
 //    val context = LocalContext.current
 //    val db = MyDatabase.getInstance(context)
 //    val userDao = db.userDao()
-//
-////    val coroutineScope = rememberCoroutineScope()
-////
-////    LaunchedEffect(Unit) {
-////        val user = withContext(Dispatchers.IO) {
-////            println(userDao.getUserByCredentials("email", "password"))
-////        }
-////    }
 
 
     val navController = rememberNavController()

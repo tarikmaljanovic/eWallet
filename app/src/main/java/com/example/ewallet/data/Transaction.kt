@@ -2,8 +2,6 @@ package com.example.ewallet.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
-import androidx.room.Relation
 
 @Entity(tableName = "transactions",
     primaryKeys = ["userId", "cardId"],
