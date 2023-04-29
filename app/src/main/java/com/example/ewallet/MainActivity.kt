@@ -1,5 +1,6 @@
 package com.example.ewallet
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,12 +10,23 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import com.example.ewallet.data.CardDao
+import com.example.ewallet.data.MyDatabase
+import com.example.ewallet.data.User
+import com.example.ewallet.data.UserDao
 import com.example.ewallet.ui.theme.EWalletTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +47,19 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
+//    val context = LocalContext.current
+//    val db = MyDatabase.getInstance(context)
+//    val userDao = db.userDao()
+//
+////    val coroutineScope = rememberCoroutineScope()
+////
+////    LaunchedEffect(Unit) {
+////        val user = withContext(Dispatchers.IO) {
+////            println(userDao.getUserByCredentials("email", "password"))
+////        }
+////    }
+
+
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "Login") {
         composable("MainMenu") { MainMenuScreen(navController = navController) }
