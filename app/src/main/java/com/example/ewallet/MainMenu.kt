@@ -64,6 +64,8 @@ fun MainMenuScreen(
             Spacer(modifier = Modifier.height(16.dp))
             MenuButton(optionName = "Monthly Balance Sheet", destination = { navController.navigate("BalanceSheet") })
             Spacer(modifier = Modifier.height(16.dp))
+            MenuButton(optionName = "Edit Profile", destination = { navController.navigate("EditProfile") })
+            Spacer(modifier = Modifier.height(16.dp))
             MenuButton(optionName = "Logout", destination = { navController.navigate("Login") })
         }
     }

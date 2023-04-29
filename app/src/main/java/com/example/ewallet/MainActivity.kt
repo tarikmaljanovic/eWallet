@@ -58,7 +58,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
         composable("MyCards") { MyCardsScreen(navController = navController) }
         composable("NewCard") { NewCardScreen(navController = navController) }
         composable("NewTransaction") { NewTransactionScreen(navController = navController) }
-        composable("TransactionHistory") { TransactionHistoryScreen(navController = navController) }
+        composable("EditProfile") { EditProfileScreen(navController = navController)
+        }
     }
 }
 
