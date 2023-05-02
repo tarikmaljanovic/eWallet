@@ -1,6 +1,7 @@
 package com.example.ewallet.data
 
 import androidx.room.*
+import com.example.ewallet.CurrentUser
 
 @Dao
 interface UserDao {

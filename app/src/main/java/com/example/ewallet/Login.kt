@@ -52,8 +52,6 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
-
-
     Column(
         modifier
             .fillMaxSize()
