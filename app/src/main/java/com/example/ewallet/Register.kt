@@ -29,7 +29,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ewallet.data.MyDatabase
+import com.example.ewallet.data.User
 import com.example.ewallet.ui.theme.EWalletTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
@@ -45,6 +51,12 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
 
     val focusManager = LocalFocusManager.current
+
+    val context = LocalContext.current
+    val db = MyDatabase.getInstance(context)
+    val userDao = db.userDao()
+
+    val myScope = CoroutineScope(Dispatchers.IO)
 
     Column (
         modifier.fillMaxSize(),
@@ -174,6 +186,11 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
+                    myScope.launch {
+                        if(fullName != null && email != null && password != null) {
+                            userDao.insert(User(fullName = fullName, email = email, password = password))
+                        }
+                    }
                     navController.navigate("Login")
                 },
                 shape = CutCornerShape(10),

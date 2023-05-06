@@ -44,10 +44,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-//    val context = LocalContext.current
-//    val db = MyDatabase.getInstance(context)
-//    val userDao = db.userDao()
-
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "Login") {

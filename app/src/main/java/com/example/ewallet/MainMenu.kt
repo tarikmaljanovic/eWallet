@@ -42,7 +42,7 @@ fun MainMenuScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Welcome: <FULL NAME>",
+                text = "Welcome: " + CurrentUser.instance?.fullName,
                 fontSize = 25.sp,
                 color = Color.White,
                 fontFamily = ubuntuFont
@@ -66,7 +66,10 @@ fun MainMenuScreen(
             Spacer(modifier = Modifier.height(16.dp))
             MenuButton(optionName = "Edit Profile", destination = { navController.navigate("EditProfile") })
             Spacer(modifier = Modifier.height(16.dp))
-            MenuButton(optionName = "Logout", destination = { navController.navigate("Login") })
+            MenuButton(optionName = "Logout", destination = {
+                navController.navigate("Login")
+                CurrentUser.instance = null
+            })
         }
     }
 }

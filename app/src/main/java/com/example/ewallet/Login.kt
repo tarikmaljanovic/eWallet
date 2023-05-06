@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -35,7 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavHostController
+import com.example.ewallet.data.MyDatabase
+import com.example.ewallet.data.User
 import com.example.ewallet.ui.theme.EWalletTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
@@ -51,6 +58,12 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
+
+    val context = LocalContext.current
+    val db = MyDatabase.getInstance(context)
+    val userDao = db.userDao()
+
+    val myScope = CoroutineScope(Dispatchers.IO)
 
     Column(
         modifier
@@ -151,9 +164,16 @@ fun LoginScreen(
             Row {
                 Button(
                     onClick = {
-                        wrongInfo = true
-                        navController.navigate("MainMenu")
-                              },
+                          myScope.launch {
+                              CurrentUser.instance = userDao.getUserByCredentials(email = email, password = password) ?: null
+                          }
+                        if(CurrentUser.instance == null) {
+                            wrongInfo = true
+                        } else {
+                            wrongInfo = false
+                            navController.navigate("MainMenu")
+                        }
+                    },
                     shape = CutCornerShape(10),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))
                 ) {
