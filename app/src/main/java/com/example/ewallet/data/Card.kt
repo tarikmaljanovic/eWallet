@@ -9,8 +9,10 @@ import androidx.room.Relation
 data class Card(
     @PrimaryKey val cardId: Int,
     var cardName: String,
-    var cardNumber: Int,
+    var cardNumber: String,
     var expDate: Int,
+    var expMonth: Int,
+    var expYear: Int,
     var res: Int,
     val userId: Int
 )

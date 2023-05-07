@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.WindowInsetsAnimation
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -68,6 +66,7 @@ fun LoginScreen(
     Column(
         modifier
             .fillMaxSize()
+            .background(Color.White)
     ) {
         Column (
             modifier
@@ -84,7 +83,8 @@ fun LoginScreen(
             modifier
                 .fillMaxWidth()
                 .weight(2f)
-                .background(Color.White),
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -93,7 +93,8 @@ fun LoginScreen(
             }
             Spacer(modifier = modifier.height(35.dp))
             Column (
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.Start,
+                modifier = modifier.background(Color.White)
             ) {
                 Text(
                     text = "Email:",
@@ -114,20 +115,22 @@ fun LoginScreen(
                     onValueChange = {email = it},
                     modifier = modifier
                         .clip(RoundedCornerShape(20.dp))
-                        .height(50.dp)
+                        .height(55.dp)
                         .width(300.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.Black,
                         placeholderColor = Color.Gray,
                         focusedIndicatorColor = Color.Transparent, // removes underline when focused
                         unfocusedIndicatorColor = Color.Transparent, // removes underline when unfocused
-                        disabledIndicatorColor = Color.Transparent // removes underline when disabled
+                        disabledIndicatorColor = Color.Transparent, // removes underline when disabled
+                        backgroundColor = Color(0xFFD9D9D9)
                     )
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Column (
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.Start,
+                modifier = modifier.background(Color.White)
             ) {
                 Text(
                     text = "Password:",
@@ -149,19 +152,22 @@ fun LoginScreen(
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = modifier
                         .clip(RoundedCornerShape(20.dp))
-                        .height(50.dp)
+                        .height(55.dp)
                         .width(300.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.Black,
                         placeholderColor = Color.Gray,
                         focusedIndicatorColor = Color.Transparent, // removes underline when focused
                         unfocusedIndicatorColor = Color.Transparent, // removes underline when unfocused
-                        disabledIndicatorColor = Color.Transparent // removes underline when disabled
+                        disabledIndicatorColor = Color.Transparent, // removes underline when disabled
+                        backgroundColor = Color(0xFFD9D9D9)
                     )
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Row {
+            Row(
+                modifier = modifier.background(Color.White)
+            ) {
                 Button(
                     onClick = {
                           myScope.launch {
@@ -174,7 +180,7 @@ fun LoginScreen(
                             navController.navigate("MainMenu")
                         }
                     },
-                    shape = CutCornerShape(10),
+                    shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))
                 ) {
                     Text("Log in", fontSize = 20.sp, fontFamily = ubuntuFont, color = Color.White)
@@ -184,9 +190,10 @@ fun LoginScreen(
                     onClick = {
                         navController.navigate("Register")
                     },
-                    shape = CutCornerShape(10),
+                    shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, Color.Red),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFCD0000))
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFCD0000), backgroundColor = Color.White),
+
                 ) {
                     Text("Register", fontSize = 20.sp, fontFamily = ubuntuFont, color = Color(0xFFCD0000))
                 }

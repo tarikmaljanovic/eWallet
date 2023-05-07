@@ -5,10 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -59,7 +61,7 @@ fun RegisterScreen(
     val myScope = CoroutineScope(Dispatchers.IO)
 
     Column (
-        modifier.fillMaxSize(),
+        modifier.fillMaxSize().background(Color.White),
     ) {
         Column (
             modifier
@@ -76,12 +78,14 @@ fun RegisterScreen(
             modifier
                 .fillMaxWidth()
                 .weight(2f)
-                .background(Color.White),
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             Column (
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.Start,
+                modifier = modifier.background(Color.White)
             ) {
                 Text(
                     text = "Full Name:",
@@ -103,20 +107,22 @@ fun RegisterScreen(
                     onValueChange = {fullName = it},
                     modifier = modifier
                         .clip(RoundedCornerShape(20.dp))
-                        .height(50.dp)
+                        .height(55.dp)
                         .width(300.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.Black,
                         placeholderColor = Color.Gray,
                         focusedIndicatorColor = Color.Transparent, // removes underline when focused
                         unfocusedIndicatorColor = Color.Transparent, // removes underline when unfocused
-                        disabledIndicatorColor = Color.Transparent // removes underline when disabled
+                        disabledIndicatorColor = Color.Transparent, // removes underline when disabled
+                        backgroundColor = Color(0xFFD9D9D9)
                     )
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Column (
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.Start,
+                modifier = modifier.background(Color.White)
             ) {
                 Text(
                     text = "Email:",
@@ -137,20 +143,22 @@ fun RegisterScreen(
                     onValueChange = {email = it},
                     modifier = modifier
                         .clip(RoundedCornerShape(20.dp))
-                        .height(50.dp)
+                        .height(55.dp)
                         .width(300.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.Black,
                         placeholderColor = Color.Gray,
                         focusedIndicatorColor = Color.Transparent, // removes underline when focused
                         unfocusedIndicatorColor = Color.Transparent, // removes underline when unfocused
-                        disabledIndicatorColor = Color.Transparent // removes underline when disabled
+                        disabledIndicatorColor = Color.Transparent, // removes underline when disabled
+                        backgroundColor = Color(0xFFD9D9D9)
                     )
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Column (
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.Start,
+                modifier = modifier.background(Color.White)
             ) {
                 Text(
                     text = "Password:",
@@ -172,14 +180,15 @@ fun RegisterScreen(
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = modifier
                         .clip(RoundedCornerShape(20.dp))
-                        .height(50.dp)
+                        .height(55.dp)
                         .width(300.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.Black,
                         placeholderColor = Color.Gray,
                         focusedIndicatorColor = Color.Transparent, // removes underline when focused
                         unfocusedIndicatorColor = Color.Transparent, // removes underline when unfocused
-                        disabledIndicatorColor = Color.Transparent // removes underline when disabled
+                        disabledIndicatorColor = Color.Transparent, // removes underline when disabled
+                        backgroundColor = Color(0xFFD9D9D9)
                     )
                 )
             }
@@ -193,7 +202,7 @@ fun RegisterScreen(
                     }
                     navController.navigate("Login")
                 },
-                shape = CutCornerShape(10),
+                shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))
             ) {
                 Text("Register", fontSize = 20.sp, fontFamily = ubuntuFont, color = Color.White)

@@ -49,6 +49,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = "Login") {
         composable("MainMenu") { MainMenuScreen(navController = navController) }
         composable("Login") { LoginScreen(navController = navController) }
+        composable("TransactionHistory") { TransactionHistoryScreen(navController = navController)}
         composable("Register") { RegisterScreen(navController = navController) }
         composable("BalanceSheet") { BalanceSheetScreen(navController = navController) }
         composable("MyCards") { MyCardsScreen(navController = navController) }

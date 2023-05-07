@@ -2,7 +2,10 @@ package com.example.ewallet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -16,9 +19,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 
 val ubuntuFont = FontFamily(
     Font(R.font.ubuntu_font)
@@ -52,7 +52,8 @@ fun MainMenuScreen(
             modifier
                 .fillMaxWidth()
                 .weight(2f)
-                .background(Color.White),
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -78,11 +79,10 @@ fun MainMenuScreen(
 fun MenuButton(modifier: Modifier = Modifier, optionName: String, destination: () -> Unit) {
     Button(
         onClick = destination,
-        shape = CutCornerShape(10),
+        shape = RoundedCornerShape(50),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000)),
         modifier = modifier
             .width(300.dp)
-            .shadow(10.dp)
     ) {
         Text(optionName, fontSize = 20.sp, fontFamily = ubuntuFont, color = Color.White)
     }
