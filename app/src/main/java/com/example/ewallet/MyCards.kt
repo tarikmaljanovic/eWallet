@@ -100,17 +100,17 @@ fun MyCardsScreen(
     val cardDao = db.cardDao()
 
     val myScope = CoroutineScope(Dispatchers.IO)
-    var userCards = listOf(Card(cardId = 1, cardNumber = "0", cardName = "Visa", expDate = 1, expMonth = 1, expYear = 1, userId = 1, res = 1))
+    var userCards = listOf<Card>()
 
-//    fun getCards() {
-//        if(CurrentUser.instance != null) {
-//            myScope.launch {
-//                userCards = cardDao.getCardsForUser(CurrentUser.instance!!.userId)
-//            }
-//        }
-//    }
+    fun getCards() {
+        if(CurrentUser.instance != null) {
+            myScope.launch {
+                userCards = cardDao.getCardsForUser(CurrentUser.instance!!.userId)
+            }
+        }
+    }
 
-//    getCards()
+    getCards()
 
     Column(
         modifier
@@ -203,7 +203,7 @@ fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao) {
                        value = cardNumber,
                        placeholder = { Text("000000000000") },
                        keyboardOptions = KeyboardOptions.Default.copy(
-                           keyboardType = KeyboardType.Email,
+                           keyboardType = KeyboardType.Text,
                            imeAction = ImeAction.Next
                        ),
                        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(
@@ -240,7 +240,7 @@ fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao) {
                        value = cardName,
                        placeholder = { Text("Name") },
                        keyboardOptions = KeyboardOptions.Default.copy(
-                           keyboardType = KeyboardType.Email,
+                           keyboardType = KeyboardType.Text,
                            imeAction = ImeAction.Next
                        ),
                        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(
