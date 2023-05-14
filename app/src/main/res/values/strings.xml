@@ -7,6 +7,7 @@
     <string name="addNewCard">Add New Card</string>
     <string name="sheet">Balance Sheet</string>
     <string name="editProf">Edit Profile</string>
+    <string name="balSheet">Balance Sheet</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

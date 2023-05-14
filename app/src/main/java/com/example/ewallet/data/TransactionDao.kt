@@ -13,10 +13,10 @@ interface TransactionDao {
     @Delete
     fun delete(transaction: Transaction)
 
-    @Query("SELECT * FROM transactions WHERE userId = :userId")
-    suspend fun getTransactionsForUser(userId: Int): List<Transaction>
+    @Query("SELECT * FROM transactions WHERE rec_cardId = :cardNumber")
+    suspend fun getTransactionsForCard(cardNumber: String): List<Transaction>
 
-    @Query("SELECT * FROM transactions WHERE rec_cardId = :cardId OR sen_cardId = :cardId ORDER BY year, month, date, hour, minute DESC")
-    suspend fun getTransactionsForCard(cardId: Int): List<Transaction>
+    @Query("SELECT * FROM transactions")
+    suspend fun get_all(): List<Transaction>
 
 }

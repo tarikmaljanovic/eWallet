@@ -57,8 +57,6 @@ fun TitleBanner(modifier: Modifier = Modifier, sectionId: Int, navController: Na
                 .padding(5.dp)
                 .clickable(onClick = { navController.navigate("MainMenu") }),
             tint = Color(0xFFFFFFFF),
-
-
         )
         Text(
             text = stringResource(id = sectionId),

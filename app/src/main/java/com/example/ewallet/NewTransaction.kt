@@ -1,5 +1,6 @@
 package com.example.ewallet
 
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -247,7 +248,7 @@ fun NewTransactionScreen(
                         if(sender != null && receiver != null && sending_amount.toDouble() > 0 && CurrentUser.instance != null) {
                             val calendar = Calendar.getInstance()
 
-                            val newTran: Transaction = Transaction(
+                            var newTran = Transaction(
                                 date = calendar.get(Calendar.DATE),
                                 month = calendar.get(Calendar.MONTH),
                                 year = calendar.get(Calendar.YEAR),
@@ -256,16 +257,19 @@ fun NewTransactionScreen(
                                 description = description,
                                 outcome = sending_amount.toDouble(),
                                 rec_cardId = rec_card,
-                                sen_cardId = sen_card,
-                                userId = CurrentUser.instance!!.userId
+                                sen_cardId = sen_card
                             )
+
+                            trnDao.insert(newTran)
 
                             sender.res -= sending_amount.toDouble()
                             receiver.res += sending_amount.toDouble()
 
-                            trnDao.insert(newTran)
+                            cardDao.update(sender)
+                            cardDao.update(receiver)
                         }
                     }
+                    navController.navigate("TransactionHistory")
                 },
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))

@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +55,16 @@ fun TransactionHistoryScreen(
 
     getCards()
 
+    var transactions = listOf<Transaction>()
+
+    fun getTrns() {
+        myScope.launch {
+            transactions = trnsDao.get_all()
+        }
+    }
+
+    getTrns()
+
     Column(
         modifier
             .fillMaxSize()
@@ -76,9 +88,9 @@ fun TransactionHistoryScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            LazyColumn{
-                items(cards) {
-                    item -> TranTemplate(card = item, cardDao = cardDao, trnsDao = trnsDao)
+            LazyColumn {
+                items(cards) { item ->
+                    TranTemplate(card = item, transactions = transactions)
                 }
             }
         }
@@ -86,46 +98,35 @@ fun TransactionHistoryScreen(
 }
 
 @Composable
-fun TranTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao, trnsDao: TransactionDao) {
+fun TranTemplate(modifier: Modifier = Modifier, card: Card, transactions: List<Transaction>) {
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
     )
-    val myScope = CoroutineScope(Dispatchers.IO)
-    var transactions = listOf<Transaction>()
 
-    fun getTrns() {
-        myScope.launch {
-            transactions = trnsDao.getTransactionsForCard(card.cardId)
-        }
-    }
 
-    getTrns()
 
-    if(transactions.isNotEmpty()) {
-        LazyColumn {
-            items(transactions) { item ->
-                Card(
-                    modifier
-                        .width(350.dp)
-                        .height(150.dp),
-                    shape = RoundedCornerShape(10),
-                    backgroundColor = Color(0xFFFB6767)
-                ) {
-                    Column() {
-                       Text(text = "${item.date}.${item.month}.${item.year} ${item.hour}:${item.minute}", fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
-                        if(item.sen_cardId == card.cardNumber) {
-                            Text(text = "-${item.outcome}", fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
-                        } else {
-                            Text(text = "+${item.outcome}", fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
-                        }
-                        Text(text = card.cardName, fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
-                        Text(text = card.cardNumber, fontFamily = ubuntuFont, fontSize = 10.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
-                        Text(text = item.description, fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, bottom = 5.dp))
+    for(tran in transactions) {
+        if(tran.sen_cardId == card.cardNumber || tran.rec_cardId == card.cardNumber) {
+            Card(
+                modifier
+                    .width(350.dp)
+                    .height(150.dp),
+                shape = RoundedCornerShape(10),
+                backgroundColor = Color(0xFFFB6767)
+            ) {
+                Column() {
+                    Text(text = "${tran.date}.${tran.month}.${tran.year} ${tran.hour}:${tran.minute}", fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
+                    if(tran.sen_cardId == card.cardNumber) {
+                        Text(text = "-${tran.outcome}", fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
+                    } else {
+                        Text(text = "+${tran.outcome}", fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
                     }
+                    Text(text = card.cardName, fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
+                    Text(text = card.cardNumber, fontFamily = ubuntuFont, fontSize = 10.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, top = 5.dp))
+                    Text(text = tran.description, fontFamily = ubuntuFont, fontSize = 20.sp, color = Color.White, modifier = modifier.padding(start = 10.dp, bottom = 5.dp))
                 }
-                Spacer(modifier = Modifier.height(30.dp))
             }
+            Spacer(modifier = Modifier.height(30.dp))
         }
     }
-
 }
