@@ -172,10 +172,12 @@ fun LoginScreen(
                     onClick = {
                           myScope.launch {
                               CurrentUser.instance = userDao.getUserByCredentials(email = email, password = password) ?: null
+                              if(CurrentUser.instance == null) {
+                                  wrongInfo = true
+                              }
                           }
-                        if(CurrentUser.instance == null) {
-                            wrongInfo = true
-                        } else {
+
+                         if(CurrentUser.instance != null) {
                             wrongInfo = false
                             navController.navigate("MainMenu")
                         }

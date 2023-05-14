@@ -198,6 +198,7 @@ fun EditProfileScreen(
                         myScope.launch {
                             userDao.update(CurrentUser.instance!!)
                         }
+                        navController.navigate("MainMenu")
                     }
                 },
                 shape = RoundedCornerShape(50),

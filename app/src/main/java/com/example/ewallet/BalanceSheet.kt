@@ -27,8 +27,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.ewallet.data.Card
 import com.example.ewallet.data.MyDatabase
+import com.example.ewallet.data.Transaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.*
 
 @Composable
 fun BalanceSheetScreen(
@@ -36,18 +39,56 @@ fun BalanceSheetScreen(
     modifier: Modifier = Modifier
 ) {
 
-    var totalIncome: Int = 0
-    var totalOutcome: Int = 0
+    var totalIncome: Double = 0.0
+    var totalOutcome: Double = 0.0
     var profitMargin: Double = 0.0
-    var maxIncomeCard: String = "Card Name"
-    var maxOutcomeCard: String = "Card Name"
-    var month: String = "Month"
+    val months = mapOf(
+        1 to "January",
+        2 to "February",
+        3 to "March",
+        4 to "April",
+        5 to "May",
+        6 to "June",
+        7 to "July",
+        8 to "August",
+        9 to "September",
+        10 to "October",
+        11 to "November",
+        12 to "December"
+    )
 
-    val focusManager = LocalFocusManager.current
+    val calendar = Calendar.getInstance()
+
     val myScope = CoroutineScope(Dispatchers.IO)
 
     val context = LocalContext.current
     val db = MyDatabase.getInstance(context)
+    val trnDao = db.transactionDao()
+    val cardDao = db.cardDao()
+
+    var cards = listOf<Card>()
+    var transactions = listOf<Transaction>()
+
+    fun calculate() {
+        if(CurrentUser.instance != null) {
+            myScope.launch {
+                cards = cardDao.getCardsForUser(CurrentUser.instance!!.userId)
+                transactions = trnDao.get_all()
+
+                for(card in cards) {
+                    for(tran in transactions) {
+                        if(tran.sen_cardId == card.cardNumber) {
+                            totalOutcome += tran.outcome
+                        } else if(tran.rec_cardId == card.cardNumber) {
+                            totalIncome += tran.outcome
+                        }
+                    }
+                }
+                profitMargin = ((totalIncome - totalOutcome) / totalIncome) * 100
+            }
+        }
+    }
+    calculate()
 
 
     Column(
@@ -155,67 +196,7 @@ fun BalanceSheetScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = profitMargin.toString(),
-                        fontSize = 15.sp,
-                        fontFamily = ubuntuFont,
-                        textAlign = TextAlign.Center,
-                        modifier = modifier.padding(15.dp),
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = modifier.background(Color.White),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = "Card with most income:",
-                    fontSize = 15.sp,
-                    fontFamily = ubuntuFont,
-                    textAlign = TextAlign.Center,
-                    modifier = modifier.padding(5.dp),
-                )
-                Column(
-                    modifier = modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .height(55.dp)
-                        .width(300.dp)
-                        .background(Color(0xFFD9D9D9)),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = maxIncomeCard,
-                        fontSize = 15.sp,
-                        fontFamily = ubuntuFont,
-                        textAlign = TextAlign.Center,
-                        modifier = modifier.padding(15.dp),
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = modifier.background(Color.White),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = "Card with most outcome:",
-                    fontSize = 15.sp,
-                    fontFamily = ubuntuFont,
-                    textAlign = TextAlign.Center,
-                    modifier = modifier.padding(5.dp),
-                )
-                Column(
-                    modifier = modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .height(55.dp)
-                        .width(300.dp)
-                        .background(Color(0xFFD9D9D9)),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = maxOutcomeCard.toString(),
+                        text = "$profitMargin%",
                         fontSize = 15.sp,
                         fontFamily = ubuntuFont,
                         textAlign = TextAlign.Center,
@@ -244,13 +225,15 @@ fun BalanceSheetScreen(
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = month,
-                        fontSize = 15.sp,
-                        fontFamily = ubuntuFont,
-                        textAlign = TextAlign.Center,
-                        modifier = modifier.padding(15.dp),
-                    )
+                    months[calendar.get(Calendar.MONTH)]?.let {
+                        Text(
+                            text = it,
+                            fontSize = 15.sp,
+                            fontFamily = ubuntuFont,
+                            textAlign = TextAlign.Center,
+                            modifier = modifier.padding(15.dp),
+                        )
+                    }
                 }
             }
         }

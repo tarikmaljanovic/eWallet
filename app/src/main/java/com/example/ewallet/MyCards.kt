@@ -41,6 +41,7 @@ import com.example.ewallet.data.MyDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 @Composable
@@ -135,7 +136,7 @@ fun MyCardsScreen(
         ) {
             LazyColumn {
                 items(userCards) { item ->
-                    CardTemplate(card = item, cardDao = cardDao)
+                    CardTemplate(card = item, cardDao = cardDao, navController = navController)
                 }
             }
         }
@@ -168,13 +169,15 @@ fun MyCardsScreen(
 
 
 @Composable
-fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao) {
+fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao, navController: NavHostController) {
     var openDialog by remember { mutableStateOf(false) }
     var cardNumber by remember { mutableStateOf("") }
     var cardName by remember { mutableStateOf("") }
     val myScope = CoroutineScope(Dispatchers.IO)
 
     val focusManager = LocalFocusManager.current
+
+    val calendar = Calendar.getInstance()
 
 
     fun onDismiss() {openDialog = true}
@@ -280,7 +283,11 @@ fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao) {
                Spacer(modifier = modifier.height(5.dp).background(Color.White))
                Button(
                    onClick = {
-                       cardDao.delete(card)
+                       myScope.launch {
+                           cardDao.delete(card)
+                           openDialog = false
+                       }
+                       navController.navigate("MyCards")
                    },
                    shape = RoundedCornerShape(50),
                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000)),
@@ -308,7 +315,7 @@ fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao) {
     Card(
         modifier
             .width(350.dp)
-            .height(150.dp)
+            .height(180.dp)
             .clickable {
                 openDialog = true
             },
@@ -321,6 +328,9 @@ fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao) {
             Spacer(modifier = modifier.height(20.dp))
             Text(text = "${card.res} BAM", fontSize = 25.sp, fontFamily = ubuntuFont, color = Color.White, modifier = modifier.padding(start = 10.dp, bottom = 5.dp))
             Text(text = "Expires: ${card.expDate}.${card.expMonth}.${card.expYear}", fontSize = 20.sp, fontFamily = ubuntuFont, color = Color.White, modifier = modifier.padding(start = 10.dp, bottom = 5.dp))
+            if(card.expYear == calendar.get(Calendar.YEAR)) {
+                Text(text = "Your card is expiring soon!",fontSize = 15.sp, fontFamily = ubuntuFont, color = Color.Yellow, modifier = modifier.padding(start = 10.dp, bottom = 5.dp) )
+            }
         }
     }
     Spacer(modifier = Modifier.height(30.dp))
