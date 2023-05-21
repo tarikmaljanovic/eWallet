@@ -1,12 +1,8 @@
 package com.example.ewallet
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -27,22 +22,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.ewallet.data.MyDatabase
 import com.example.ewallet.data.User
-import com.example.ewallet.ui.theme.EWalletTheme
+import com.example.ewallet.data.UserDao
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController
+    navController: NavHostController,
+    userDao: UserDao,
+    scope: CoroutineScope
 ) {
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
@@ -54,14 +48,11 @@ fun RegisterScreen(
 
     val focusManager = LocalFocusManager.current
 
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
-    val userDao = db.userDao()
-
-    val myScope = CoroutineScope(Dispatchers.IO)
 
     Column (
-        modifier.fillMaxSize().background(Color.White),
+        modifier
+            .fillMaxSize()
+            .background(Color.White),
     ) {
         Column (
             modifier
@@ -195,11 +186,18 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    myScope.launch {
-                        if(fullName != null && email != null && password != null) {
-                            userDao.insert(User(fullName = fullName, email = email, password = password))
+                    scope.launch {
+                        if (fullName != null && email != null && password != null) {
+                            userDao.insert(
+                                User(
+                                    fullName = fullName,
+                                    email = email,
+                                    password = password
+                                )
+                            )
                         }
                     }
+
                     navController.navigate("Login")
                 },
                 shape = RoundedCornerShape(50),

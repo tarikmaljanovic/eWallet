@@ -1,13 +1,8 @@
 package com.example.ewallet
 
 
-import android.os.Bundle
-import android.view.WindowInsetsAnimation
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,35 +13,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.createFontFamilyResolver
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.toColorInt
 import androidx.navigation.NavHostController
-import com.example.ewallet.data.MyDatabase
-import com.example.ewallet.data.User
-import com.example.ewallet.ui.theme.EWalletTheme
+import com.example.ewallet.data.UserDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController
+    navController: NavHostController,
+    userDao: UserDao,
+    scope: CoroutineScope
 ) {
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
@@ -56,12 +44,6 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
-
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
-    val userDao = db.userDao()
-
-    val myScope = CoroutineScope(Dispatchers.IO)
 
     Column(
         modifier
@@ -170,17 +152,17 @@ fun LoginScreen(
             ) {
                 Button(
                     onClick = {
-                          myScope.launch {
-                              CurrentUser.instance = userDao.getUserByCredentials(email = email, password = password) ?: null
-                              if(CurrentUser.instance == null) {
-                                  wrongInfo = true
-                              }
-                          }
+                            scope.launch {
+                                CurrentUser.instance = userDao.getUserByCredentials(email = email, password = password) ?: null
+                            }
+                            if(CurrentUser.instance == null) {
+                                wrongInfo = true
+                            }
+                            if(CurrentUser.instance != null) {
+                                wrongInfo = false
+                                navController.navigate("MainMenu")
+                            }
 
-                         if(CurrentUser.instance != null) {
-                            wrongInfo = false
-                            navController.navigate("MainMenu")
-                        }
                     },
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))

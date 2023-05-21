@@ -1,22 +1,26 @@
 package com.example.ewallet.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
 interface TransactionDao {
     @Insert
-    suspend fun insert(transaction: Transaction)
+    fun insert(transaction: Transaction)
 
     @Update
-    suspend fun update(transaction: Transaction)
+    fun update(transaction: Transaction)
 
     @Delete
     fun delete(transaction: Transaction)
 
     @Query("SELECT * FROM transactions WHERE rec_cardId = :cardNumber")
-    suspend fun getTransactionsForCard(cardNumber: String): List<Transaction>
+    fun getTransactionsForCard(cardNumber: String): List<Transaction>
 
     @Query("SELECT * FROM transactions")
-    suspend fun get_all(): List<Transaction>
+    fun get_all(): List<Transaction>
+
+    @Query("SELECT * FROM transactions")
+    fun get_all2(): LiveData<List<Transaction>>
 
 }

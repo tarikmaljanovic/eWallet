@@ -1,6 +1,5 @@
 package com.example.ewallet
 
-import android.app.Dialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,9 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -37,9 +33,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.ewallet.data.Card
 import com.example.ewallet.data.CardDao
-import com.example.ewallet.data.MyDatabase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -88,22 +82,19 @@ fun TitleBanner(modifier: Modifier = Modifier, sectionId: Int, navController: Na
 @Composable
 fun MyCardsScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cardDao: CardDao,
+    scope: CoroutineScope
 ) {
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
     )
 
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
-    val cardDao = db.cardDao()
-
-    val myScope = CoroutineScope(Dispatchers.IO)
     var userCards = listOf<Card>()
 
     fun getCards() {
-        if(CurrentUser.instance != null) {
-            myScope.launch {
+        scope.launch {
+            if(CurrentUser.instance != null) {
                 userCards = cardDao.getCardsForUser(CurrentUser.instance!!.userId)
             }
         }
@@ -136,7 +127,7 @@ fun MyCardsScreen(
         ) {
             LazyColumn {
                 items(userCards) { item ->
-                    CardTemplate(card = item, cardDao = cardDao, navController = navController)
+                    CardTemplate(card = item, cardDao = cardDao, navController = navController, scope = scope)
                 }
             }
         }
@@ -169,11 +160,10 @@ fun MyCardsScreen(
 
 
 @Composable
-fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao, navController: NavHostController) {
+fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao, navController: NavHostController, scope: CoroutineScope) {
     var openDialog by remember { mutableStateOf(false) }
     var cardNumber by remember { mutableStateOf("") }
     var cardName by remember { mutableStateOf("") }
-    val myScope = CoroutineScope(Dispatchers.IO)
 
     val focusManager = LocalFocusManager.current
 
@@ -265,13 +255,12 @@ fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao, na
                }
                Button(
                    onClick = {
-                     myScope.launch {
-                         card.cardName = cardName
-                         card.cardNumber = cardNumber
-                         cardDao.update(card)
-                         openDialog = false
-
-                     }
+                       scope.launch {
+                           card.cardName = cardName
+                           card.cardNumber = cardNumber
+                           cardDao.update(card)
+                           openDialog = false
+                       }
                    },
                    shape = RoundedCornerShape(50),
                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000)),
@@ -283,10 +272,10 @@ fun CardTemplate(modifier: Modifier = Modifier, card: Card, cardDao: CardDao, na
                Spacer(modifier = modifier.height(5.dp).background(Color.White))
                Button(
                    onClick = {
-                       myScope.launch {
-                           cardDao.delete(card)
-                           openDialog = false
-                       }
+                        scope.launch {
+                            cardDao.delete(card)
+                            openDialog = false
+                        }
                        navController.navigate("MyCards")
                    },
                    shape = RoundedCornerShape(50),

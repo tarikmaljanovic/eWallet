@@ -1,19 +1,23 @@
 package com.example.ewallet.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.ewallet.CurrentUser
 
 @Dao
 interface UserDao {
     @Insert
-    suspend fun insert(user: User)
+    fun insert(user: User)
 
     @Update
-    suspend fun update(user: User)
+    fun update(user: User)
 
     @Delete
     fun delete(user: User)
 
     @Query("SELECT * FROM users WHERE email = :email AND password = :password")
-    suspend fun getUserByCredentials(email: String, password: String): User?
+    fun getUserByCredentials(email: String, password: String): User?
+
+    @Query("SELECT * FROM users")
+    fun get_all(): LiveData<List<User>>
 }

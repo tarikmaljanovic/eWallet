@@ -30,23 +30,19 @@ import kotlin.math.min
 @Composable
 fun TransactionHistoryScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trnsDao: TransactionDao,
+    cardDao: CardDao,
+    scope: CoroutineScope
 ) {
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
     )
 
-    val myScope = CoroutineScope(Dispatchers.IO)
-
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
-    val trnsDao = db.transactionDao()
-    val cardDao = db.cardDao()
-
     var cards = listOf<Card>()
 
     fun getCards() {
-        myScope.launch {
+        scope.launch {
             if(CurrentUser.instance != null) {
                 cards = cardDao.getCardsForUser(CurrentUser.instance!!.userId)
             }
@@ -58,7 +54,7 @@ fun TransactionHistoryScreen(
     var transactions = listOf<Transaction>()
 
     fun getTrns() {
-        myScope.launch {
+        scope.launch {
             transactions = trnsDao.get_all()
         }
     }
@@ -102,8 +98,6 @@ fun TranTemplate(modifier: Modifier = Modifier, card: Card, transactions: List<T
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
     )
-
-
 
     for(tran in transactions) {
         if(tran.sen_cardId == card.cardNumber || tran.rec_cardId == card.cardNumber) {

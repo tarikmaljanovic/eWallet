@@ -14,9 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
@@ -26,16 +24,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.ewallet.data.MyDatabase
-import com.example.ewallet.data.User
+import com.example.ewallet.data.UserDao
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun EditProfileScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    userDao: UserDao,
+    scope: CoroutineScope
 ) {
 
     val ubuntuFont = FontFamily(
@@ -43,15 +41,10 @@ fun EditProfileScreen(
     )
 
     val focusManager = LocalFocusManager.current
-    val myScope = CoroutineScope(Dispatchers.IO)
 
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
-    val userDao = db.userDao()
 
     Column (
         modifier
@@ -62,8 +55,7 @@ fun EditProfileScreen(
             modifier = modifier
                 .fillMaxWidth()
                 .weight(0.5f)
-                .background(Color(0xFFCD0000))
-                .verticalScroll(rememberScrollState()),
+                .background(Color(0xFFCD0000)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TitleBanner(sectionId = R.string.editProf, navController = navController)
@@ -73,7 +65,8 @@ fun EditProfileScreen(
             modifier = modifier
                 .fillMaxWidth()
                 .weight(2f)
-                .background(Color.White),
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -190,16 +183,19 @@ fun EditProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    if(CurrentUser.instance != null) {
-                        CurrentUser.instance!!.email = email
-                        CurrentUser.instance!!.fullName = fullName
-                        CurrentUser.instance!!.password = password
+                    scope.launch {
+                        if (CurrentUser.instance != null) {
+                            CurrentUser.instance!!.email = email
+                            CurrentUser.instance!!.fullName = fullName
+                            CurrentUser.instance!!.password = password
 
-                        myScope.launch {
+
                             userDao.update(CurrentUser.instance!!)
                         }
-                        navController.navigate("MainMenu")
                     }
+                            navController.navigate("MainMenu")
+
+
                 },
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))

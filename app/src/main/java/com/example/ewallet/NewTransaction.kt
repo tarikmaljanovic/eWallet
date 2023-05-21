@@ -1,6 +1,5 @@
 package com.example.ewallet
 
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -23,35 +21,29 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ewallet.data.Card
-import com.example.ewallet.data.MyDatabase
+import com.example.ewallet.data.CardDao
 import com.example.ewallet.data.Transaction
+import com.example.ewallet.data.TransactionDao
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import java.util.*
 
 @Composable
 fun NewTransactionScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cardDao: CardDao,
+    trnDao: TransactionDao,
+    scope: CoroutineScope
 ) {
     val ubuntuFont = FontFamily(
         Font(R.font.ubuntu_font)
     )
 
     val focusManager = LocalFocusManager.current
-
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
-    val trnDao = db.transactionDao()
-    val cardDao = db.cardDao()
-
-    val myScope = CoroutineScope(Dispatchers.IO)
 
     var rec_card by remember { mutableStateOf("") }
     var sen_card by remember { mutableStateOf("") }
@@ -240,7 +232,7 @@ fun NewTransactionScreen(
                 .background(Color.White))
             Button(
                 onClick = {
-                    myScope.launch {
+                    scope.launch {
                         val sender: Card? = cardDao.getCardByNumber(sen_card)
                         val receiver: Card? = cardDao.getCardByNumber(rec_card)
 

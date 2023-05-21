@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -25,20 +24,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ewallet.data.Card
-import com.example.ewallet.data.MyDatabase
+import com.example.ewallet.data.CardDao
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun NewCardScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cardDao: CardDao,
+    scope: CoroutineScope
 ) {
 
     val ubuntuFont = FontFamily(
@@ -69,11 +69,6 @@ fun NewCardScreen(
     )
 
     val focusManager = LocalFocusManager.current
-    val myScope = CoroutineScope(Dispatchers.IO)
-
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
-    val cardDao = db.cardDao()
 
     Column(
         modifier
@@ -205,7 +200,7 @@ fun NewCardScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    myScope.launch {
+                    scope.launch {
                         if(CurrentUser.instance != null) {
                             var newCard: Card = Card(
                                 cardName = cardName,

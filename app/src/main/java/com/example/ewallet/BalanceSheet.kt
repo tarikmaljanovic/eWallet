@@ -4,39 +4,32 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.ewallet.data.Card
-import com.example.ewallet.data.MyDatabase
+import com.example.ewallet.data.CardDao
 import com.example.ewallet.data.Transaction
+import com.example.ewallet.data.TransactionDao
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
 fun BalanceSheetScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cardDao: CardDao,
+    trnDao: TransactionDao,
+    scope: CoroutineScope
 ) {
 
     var totalIncome: Double = 0.0
@@ -59,27 +52,21 @@ fun BalanceSheetScreen(
 
     val calendar = Calendar.getInstance()
 
-    val myScope = CoroutineScope(Dispatchers.IO)
-
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
-    val trnDao = db.transactionDao()
-    val cardDao = db.cardDao()
 
     var cards = listOf<Card>()
     var transactions = listOf<Transaction>()
 
     fun calculate() {
-        if(CurrentUser.instance != null) {
-            myScope.launch {
+        scope.launch {
+            if (CurrentUser.instance != null) {
                 cards = cardDao.getCardsForUser(CurrentUser.instance!!.userId)
                 transactions = trnDao.get_all()
 
-                for(card in cards) {
-                    for(tran in transactions) {
-                        if(tran.sen_cardId == card.cardNumber) {
+                for (card in cards) {
+                    for (tran in transactions) {
+                        if (tran.sen_cardId == card.cardNumber) {
                             totalOutcome += tran.outcome
-                        } else if(tran.rec_cardId == card.cardNumber) {
+                        } else if (tran.rec_cardId == card.cardNumber) {
                             totalIncome += tran.outcome
                         }
                     }
