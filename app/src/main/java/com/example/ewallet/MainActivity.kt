@@ -45,7 +45,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         return viewModelStore
     }
 
-    val myScope = CoroutineScope(Dispatchers.IO)
+    val myScope = CoroutineScope(Dispatchers.Default)
     val context = LocalContext.current
     val db = MyDatabase.getInstance(context)
     val userDao = db.userDao()

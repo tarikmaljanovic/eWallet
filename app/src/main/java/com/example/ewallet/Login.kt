@@ -27,6 +27,7 @@ import androidx.navigation.NavHostController
 import com.example.ewallet.data.UserDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 @Composable
