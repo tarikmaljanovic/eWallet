@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,13 +23,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val db = MyDatabase.getInstance(this)
             EWalletTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MainScreen()
+                    MainScreen(db = db)
                 }
             }
         }
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(modifier: Modifier = Modifier, db: MyDatabase) {
     val viewModelStore = ViewModelStore()
 
     fun getViewModelStore(): ViewModelStore {
@@ -46,8 +46,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
     }
 
     val myScope = CoroutineScope(Dispatchers.Default)
-    val context = LocalContext.current
-    val db = MyDatabase.getInstance(context)
     val userDao = db.userDao()
     val cardDao = db.cardDao()
     val trnDao = db.transactionDao()
@@ -73,6 +71,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
 @Composable
 fun DefaultPreview() {
     EWalletTheme {
-        MainScreen()
+        val db = MyDatabase.getInstance(LocalContext.current)
+        MainScreen(db =db)
     }
 }
