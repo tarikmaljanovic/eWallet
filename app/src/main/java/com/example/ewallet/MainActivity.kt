@@ -72,6 +72,6 @@ fun MainScreen(modifier: Modifier = Modifier, db: MyDatabase) {
 fun DefaultPreview() {
     EWalletTheme {
         val db = MyDatabase.getInstance(LocalContext.current)
-        MainScreen(db =db)
+        MainScreen(db = db)
     }
 }

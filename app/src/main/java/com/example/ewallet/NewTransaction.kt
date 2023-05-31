@@ -50,6 +50,7 @@ fun NewTransactionScreen(
     var sen_card by remember { mutableStateOf("") }
     var sending_amount by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var wrongCard: Boolean? = null
 
     Column(
         modifier
@@ -237,37 +238,48 @@ fun NewTransactionScreen(
                         val sender: Card? = cardDao.getCardByNumber(sen_card)
                         val receiver: Card? = cardDao.getCardByNumber(rec_card)
 
-
                         if(sender != null && receiver != null && sending_amount.toDouble() > 0 && CurrentUser.instance != null) {
-                            val calendar = Calendar.getInstance()
+                            if(sender.userId != CurrentUser.instance!!.userId) {
+                                wrongCard = true
+                            } else {
+                                wrongCard = false
+                                val calendar = Calendar.getInstance()
 
-                            var newTran = Transaction(
-                                date = calendar.get(Calendar.DATE),
-                                month = calendar.get(Calendar.MONTH),
-                                year = calendar.get(Calendar.YEAR),
-                                hour = calendar.get(Calendar.HOUR),
-                                minute = calendar.get(Calendar.MINUTE),
-                                description = description,
-                                outcome = sending_amount.toDouble(),
-                                rec_cardId = rec_card,
-                                sen_cardId = sen_card
-                            )
+                                var newTran = Transaction(
+                                    date = calendar.get(Calendar.DATE),
+                                    month = calendar.get(Calendar.MONTH),
+                                    year = calendar.get(Calendar.YEAR),
+                                    hour = calendar.get(Calendar.HOUR),
+                                    minute = calendar.get(Calendar.MINUTE),
+                                    description = description,
+                                    outcome = sending_amount.toDouble(),
+                                    rec_cardId = rec_card,
+                                    sen_cardId = sen_card
+                                )
 
-                            trnDao.insert(newTran)
+                                trnDao.insert(newTran)
 
-                            sender.res -= sending_amount.toDouble()
-                            receiver.res += sending_amount.toDouble()
+                                sender.res -= sending_amount.toDouble()
+                                receiver.res += sending_amount.toDouble()
 
-                            cardDao.update(sender)
-                            cardDao.update(receiver)
+                                cardDao.update(sender)
+                                cardDao.update(receiver)
+                            }
                         }
+
                     }
-                    navController.navigate("TransactionHistory")
+                    if(wrongCard == false) {
+                        navController.navigate("TransactionHistory")
+                    }
                 },
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))
             ) {
                 Text("Make Transaction", fontSize = 20.sp, fontFamily = ubuntuFont, color = Color.White)
+            }
+            if(wrongCard == true) {
+                Spacer(modifier = modifier.height(20.dp))
+                Text(text = "Sending card not found!", fontSize = 15.sp, fontFamily = ubuntuFont, color = Color(0xFFCD0000))
             }
         }
     }
