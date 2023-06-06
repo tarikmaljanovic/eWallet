@@ -50,7 +50,6 @@ fun NewTransactionScreen(
     var sen_card by remember { mutableStateOf("") }
     var sending_amount by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var wrongCard: Boolean? = null
 
     Column(
         modifier
@@ -239,10 +238,6 @@ fun NewTransactionScreen(
                         val receiver: Card? = cardDao.getCardByNumber(rec_card)
 
                         if(sender != null && receiver != null && sending_amount.toDouble() > 0 && CurrentUser.instance != null) {
-                            if(sender.userId != CurrentUser.instance!!.userId) {
-                                wrongCard = true
-                            } else {
-                                wrongCard = false
                                 val calendar = Calendar.getInstance()
 
                                 var newTran = Transaction(
@@ -265,21 +260,15 @@ fun NewTransactionScreen(
                                 cardDao.update(sender)
                                 cardDao.update(receiver)
                             }
-                        }
+
 
                     }
-                    if(wrongCard == false) {
-                        navController.navigate("TransactionHistory")
-                    }
+                    navController.navigate("TransactionHistory")
                 },
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD0000))
             ) {
                 Text("Make Transaction", fontSize = 20.sp, fontFamily = ubuntuFont, color = Color.White)
-            }
-            if(wrongCard == true) {
-                Spacer(modifier = modifier.height(20.dp))
-                Text(text = "Sending card not found!", fontSize = 15.sp, fontFamily = ubuntuFont, color = Color(0xFFCD0000))
             }
         }
     }
